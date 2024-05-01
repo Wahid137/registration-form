@@ -99,15 +99,7 @@ const Register = () => {
 
     return (
         <Container
-            style={{
-                paddingTop: "20px",
-                paddingBottom: "20px",
-                display: "flex",
-                width: "50%",
-                justifyContent: "center",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                borderRadius: "8px",
-            }}
+
         >
 
             <Form style={{ width: "70%" }} onSubmit={handleSubmit(onSubmit)}>
