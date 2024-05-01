@@ -107,7 +107,6 @@ const Register = () => {
             return;
         }
         console.log(data);
-        alert("Registration Successfully done!")
         reset();
         setFormErrors({});
     };
