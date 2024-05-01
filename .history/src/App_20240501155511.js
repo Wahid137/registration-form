@@ -5,7 +5,7 @@ import Register from './components/Register';
 function App() {
   return (
     <div className="App">
-      <Segment textAlign='center' size={"huge"}>Registration Form</Segment>
+      <Segment textAlign='center'>Center aligned content.</Segment>
       <Register />
     </div>
   );

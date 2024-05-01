@@ -1,9 +1,8 @@
 import Joi from "joi";
+import moment from "moment";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
-import { minBirthDate } from "../utils/Moment";
-import { nameRegex, passwordRegex, phoneRegex } from "../utils/RegExp";
 import { countryOptions } from "../utils/country";
 import { getPasswordErrorMessage } from "../utils/getPasswordErrorMessage";
 
@@ -19,7 +18,11 @@ const Register = () => {
     const password = watch("password", "");
     const [formErrors, setFormErrors] = useState({});
 
-    //schema
+    const minBirthDate = moment().subtract(18, "years").format("YYYY-MM-DD");
+    const nameRegex = /^[A-Za-z\s]+$/;
+    const phoneRegex = /^[0-9]{10}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,30}$/;
+
     const schema = Joi.object({
         firstName: Joi.string().min(2).max(20).pattern(nameRegex).required().messages({
             "string.base": "First name must be a string",
@@ -73,11 +76,9 @@ const Register = () => {
         }),
         country: Joi.string().required().messages({
             "any.required": "Please select a country",
-            "string.empty": "Please select a country",
         }),
     });
 
-    //submit handler
     const onSubmit = (data) => {
         const { error } = schema.validate(data, { abortEarly: false });
         if (error) {
@@ -92,9 +93,9 @@ const Register = () => {
             return;
         }
         console.log(data);
+        alert("Registration Successfully done!")
         reset();
         setFormErrors({});
-        alert("Registration Successfully done!")
     };
 
     return (
@@ -111,7 +112,7 @@ const Register = () => {
         >
 
             <Form style={{ width: "70%" }} onSubmit={handleSubmit(onSubmit)}>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.firstName !== undefined}>
                         <label>First Name</label>
                         <input
@@ -126,7 +127,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.lastName !== undefined}>
                         <label>Last Name</label>
                         <input
@@ -141,19 +142,19 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField>
                         <label>Gender</label>
-                        <div className="gender-field">
-                            <div className="gender-option">
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            <div style={{ marginRight: "1rem" }}>
                                 <input type="radio" id="male" {...register("gender")} value="male" />
                                 <label htmlFor="male">Male</label>
                             </div>
-                            <div className="gender-option">
+                            <div style={{ marginRight: "1rem" }}>
                                 <input type="radio" id="female" {...register("gender")} value="female" />
                                 <label htmlFor="female">Female</label>
                             </div>
-                            <div className="gender-option">
+                            <div>
                                 <input type="radio" id="other" {...register("gender")} value="other" />
                                 <label htmlFor="other">Other</label>
                             </div>
@@ -165,7 +166,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.birthDate !== undefined}>
                         <label>Birth Date</label>
                         <input
@@ -181,7 +182,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.phoneNumber !== undefined}>
                         <label>Phone Number</label>
                         <input
@@ -196,7 +197,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.email !== undefined}>
                         <label>Email</label>
                         <input
@@ -211,10 +212,10 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.country !== undefined}>
                         <label>Country</label>
-                        <select {...register("country")} className={formErrors.country ? "error" : "ui search dropdown"}>
+                        <select {...register("country")} className={formErrors.country ? "error" : ""}>
                             <option value="">Select your country</option>
                             {
                                 countryOptions?.map((country) => <option key={country?.key} value={country?.value}>{country?.text}</option>)
@@ -227,7 +228,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.password !== undefined}>
                         <label>Password</label>
                         <div className="ui input">
@@ -251,7 +252,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.confirmPassword !== undefined}>
                         <label>Confirm Password</label>
                         <div className="ui input">

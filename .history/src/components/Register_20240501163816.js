@@ -145,15 +145,15 @@ const Register = () => {
                     <FormField>
                         <label>Gender</label>
                         <div className="gender-field">
-                            <div className="gender-option">
+                            <div style={{ marginRight: "1rem" }}>
                                 <input type="radio" id="male" {...register("gender")} value="male" />
                                 <label htmlFor="male">Male</label>
                             </div>
-                            <div className="gender-option">
+                            <div style={{ marginRight: "1rem" }}>
                                 <input type="radio" id="female" {...register("gender")} value="female" />
                                 <label htmlFor="female">Female</label>
                             </div>
-                            <div className="gender-option">
+                            <div>
                                 <input type="radio" id="other" {...register("gender")} value="other" />
                                 <label htmlFor="other">Other</label>
                             </div>

@@ -1,7 +1,7 @@
 import Joi from "joi";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
+import { Button, Form, FormField, Icon } from "semantic-ui-react";
 import { minBirthDate } from "../utils/Moment";
 import { nameRegex, passwordRegex, phoneRegex } from "../utils/RegExp";
 import { countryOptions } from "../utils/country";
@@ -98,20 +98,10 @@ const Register = () => {
     };
 
     return (
-        <Container
-            style={{
-                paddingTop: "20px",
-                paddingBottom: "20px",
-                display: "flex",
-                width: "50%",
-                justifyContent: "center",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                borderRadius: "8px",
-            }}
-        >
+        <Containe>
 
             <Form style={{ width: "70%" }} onSubmit={handleSubmit(onSubmit)}>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.firstName !== undefined}>
                         <label>First Name</label>
                         <input
@@ -126,7 +116,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.lastName !== undefined}>
                         <label>Last Name</label>
                         <input
@@ -141,19 +131,19 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField>
                         <label>Gender</label>
-                        <div className="gender-field">
-                            <div className="gender-option">
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            <div style={{ marginRight: "1rem" }}>
                                 <input type="radio" id="male" {...register("gender")} value="male" />
                                 <label htmlFor="male">Male</label>
                             </div>
-                            <div className="gender-option">
+                            <div style={{ marginRight: "1rem" }}>
                                 <input type="radio" id="female" {...register("gender")} value="female" />
                                 <label htmlFor="female">Female</label>
                             </div>
-                            <div className="gender-option">
+                            <div>
                                 <input type="radio" id="other" {...register("gender")} value="other" />
                                 <label htmlFor="other">Other</label>
                             </div>
@@ -165,7 +155,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.birthDate !== undefined}>
                         <label>Birth Date</label>
                         <input
@@ -181,7 +171,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.phoneNumber !== undefined}>
                         <label>Phone Number</label>
                         <input
@@ -196,7 +186,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.email !== undefined}>
                         <label>Email</label>
                         <input
@@ -211,10 +201,10 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.country !== undefined}>
                         <label>Country</label>
-                        <select {...register("country")} className={formErrors.country ? "error" : "ui search dropdown"}>
+                        <select {...register("country")} className={formErrors.country ? "error" : ""}>
                             <option value="">Select your country</option>
                             {
                                 countryOptions?.map((country) => <option key={country?.key} value={country?.value}>{country?.text}</option>)
@@ -227,7 +217,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.password !== undefined}>
                         <label>Password</label>
                         <div className="ui input">
@@ -251,7 +241,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
+                <div style={{ marginBottom: "1rem" }}>
                     <FormField error={formErrors.confirmPassword !== undefined}>
                         <label>Confirm Password</label>
                         <div className="ui input">
@@ -279,7 +269,7 @@ const Register = () => {
                     Submit
                 </Button>
             </Form>
-        </Container>
+        </Containe>
     );
 };
 

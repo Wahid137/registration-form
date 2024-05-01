@@ -1,0 +1,9 @@
+.form-body {
+  paddingtop: "20px";
+  paddingbottom: "20px";
+  display: "flex";
+  width: "50%";
+  justifycontent: "center";
+  boxshadow: "0 4px 8px rgba(0,0,0,0.1)";
+  borderradius: "8px";
+}

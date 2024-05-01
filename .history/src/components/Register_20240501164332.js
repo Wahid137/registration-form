@@ -154,8 +154,12 @@ const Register = () => {
                                 <label htmlFor="female">Female</label>
                             </div>
                             <div className="gender-option">
-                                <input type="radio" id="other" {...register("gender")} value="other" />
-                                <label htmlFor="other">Other</label>
+                                <Radio
+                                    id="other"
+                                    label="Other"
+                                    {...register("gender")}
+                                    value="other"
+                                />                                <label htmlFor="other">Other</label>
                             </div>
                         </div>
                         {formErrors.gender && (

@@ -153,7 +153,7 @@ const Register = () => {
                                 <input type="radio" id="female" {...register("gender")} value="female" />
                                 <label htmlFor="female">Female</label>
                             </div>
-                            <div className="gender-option">
+                            <div>
                                 <input type="radio" id="other" {...register("gender")} value="other" />
                                 <label htmlFor="other">Other</label>
                             </div>

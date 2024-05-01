@@ -1,7 +1,7 @@
 import Joi from "joi";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
+import { Button, Container, Form, FormField, Icon, Radio } from "semantic-ui-react";
 import { minBirthDate } from "../utils/Moment";
 import { nameRegex, passwordRegex, phoneRegex } from "../utils/RegExp";
 import { countryOptions } from "../utils/country";
@@ -150,12 +150,20 @@ const Register = () => {
                                 <label htmlFor="male">Male</label>
                             </div>
                             <div className="gender-option">
-                                <input type="radio" id="female" {...register("gender")} value="female" />
-                                <label htmlFor="female">Female</label>
+                                <Radio
+                                    id="other"
+                                    label="Other"
+                                    {...register("gender")}
+                                    value="other"
+                                />                                 <label htmlFor="female">Female</label>
                             </div>
                             <div className="gender-option">
-                                <input type="radio" id="other" {...register("gender")} value="other" />
-                                <label htmlFor="other">Other</label>
+                                <Radio
+                                    id="other"
+                                    label="Other"
+                                    {...register("gender")}
+                                    value="other"
+                                />                                <label htmlFor="other">Other</label>
                             </div>
                         </div>
                         {formErrors.gender && (
