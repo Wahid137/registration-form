@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
 import { countryOptions } from "../utils/country";
-import { getPasswordErrorMessage } from "../utils/getPasswordErrorMessage";
 
 const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
