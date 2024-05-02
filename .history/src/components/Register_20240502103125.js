@@ -3,40 +3,67 @@ import Joi from "joi";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
+import { minBirthDate } from "../utils/Moment";
+import { nameRegex, passwordRegex, phoneRegex } from "../utils/RegExp";
 import { countryOptions } from "../utils/country";
+import { getPasswordErrorMessage } from "../utils/getPasswordErrorMessage";
 
-
-
+//schema
 const schema = Joi.object({
-    firstName: Joi.string().min(2).max(20).required().label("First Name"),
-    middleName: Joi.string().min(2).max(20).required().label("Last Name"),
-    birthDate: Joi.date().max('now').max('2004-01-01').iso().required().label("Birth Date").messages({
-        'date.max': 'You must be at least 18 years old',
-        'date.iso': 'Please enter a valid date',
+    firstName: Joi.string().min(2).max(20).pattern(nameRegex).required().messages({
+        "string.base": "First name must be a string",
+        "string.empty": "Please enter your first name",
+        "string.min": "First name must have at least {#limit} characters",
+        "string.max": "First name cannot exceed {#limit} characters",
+        "string.pattern.base": "First name must contain only alphabets and spaces",
+        "any.required": "First name is required",
     }),
-    gender: Joi.string().valid('male', 'female', 'other').required().label("Gender").messages({
-        'any.only': 'Please select a gender',
+    lastName: Joi.string().min(2).max(20).pattern(nameRegex).required().messages({
+        "string.base": "Last name must be a string",
+        "string.empty": "Please enter your last name",
+        "string.min": "Last name must have at least {#limit} characters",
+        "string.max": "Last name cannot exceed {#limit} characters",
+        "string.pattern.base": "Last name must contain only alphabets and spaces",
+        "any.required": "Last name is required",
     }),
-    phoneNumber: Joi.string().length(10).required().label("Phone Number"),
-    country: Joi.string().required().label("Country").messages({
-        'any.required': 'Please select a country',
+    gender: Joi.string().valid('male', 'female', 'other').required().messages({
+        "any.required": "Gender is required",
+        "any.only": "Please select a valid gender",
     }),
-    email: Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required().label("Email"),
-    password: Joi.string()
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,}$/)
+    birthDate: Joi.date()
+        .max(minBirthDate)
         .required()
-        .label("Password")
         .messages({
-            'string.pattern.base': '{{#label}} must contain at least one lowercase letter, one uppercase letter, and one digit'
+            "date.base": "Please enter a valid date",
+            "date.max": "You must be at least 18 years old",
+            "any.required": "Birth date is required",
         }),
-    confirmPassword: Joi.any()
-        .equal(Joi.ref('password'))
-        .required()
-        .label('Confirm Password')
-        .messages({
-            'any.only': '{{#label}} does not match the password'
-        }),
+    phoneNumber: Joi.string().pattern(phoneRegex).required().messages({
+        "string.base": "Phone number must be a string",
+        "string.empty": "Please enter your phone number",
+        "string.pattern.base": "Phone number must be exactly 10 digits",
+        "any.required": "Phone number is required",
+    }),
+    email: Joi.string().email({ tlds: { allow: false } }).required().messages({
+        "string.base": "Email must be a string",
+        "string.empty": "Please enter your email",
+        "string.email": "Please enter a valid email address",
+        "any.required": "Email is required",
+    }),
+    password: Joi.string().pattern(passwordRegex).required().messages({
+        "string.base": "Password must be a string",
+        "string.empty": "Please enter your password",
+        "string.pattern.base": "Password must be 3 to 30 characters long and contain at least one lowercase letter, one uppercase letter, and one digit",
+        "any.required": "Password is required",
+    }),
+    confirmPassword: Joi.string().valid(password).required().messages({
+        "any.required": "Confirm password is required",
+        "any.only": "Passwords do not match",
+    }),
+    country: Joi.string().required().messages({
+        "any.required": "Please select a country",
+        "string.empty": "Please select a country",
+    }),
 });
 
 const Register = () => {
@@ -47,12 +74,28 @@ const Register = () => {
 
     //useForm
     const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: joiResolver(schema) });
+    const password = watch("password", "");
+    const [formErrors, setFormErrors] = useState({});
+
 
 
     //submit handler
     const onSubmit = (data) => {
+        const { error } = schema.validate(data, { abortEarly: false });
+        if (error) {
+            const errorMessage = {};
+            error.details.forEach((detail) => {
+                errorMessage[detail.path[0]] = detail.message;
+            });
+            if (data.password) {
+                errorMessage.password = getPasswordErrorMessage(data.password);
+            }
+            setFormErrors(errorMessage);
+            return;
+        }
         console.log(data);
         reset();
+        setFormErrors({});
         alert("Registration Successfully done!")
     };
 
@@ -71,53 +114,82 @@ const Register = () => {
 
             <Form style={{ width: "70%" }} onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-field">
-                    <FormField>
+                    <FormField error={formErrors.firstName !== undefined}>
                         <label>First Name</label>
                         <input
                             placeholder="First Name"
                             {...register("firstName")}
-
+                            className={formErrors.firstName ? "error" : ""}
                         />
-                        {errors.firstName && (
+                        {formErrors.firstName && (
                             <div className="ui pointing red basic label">
-                                {errors.firstName.message}
+                                {formErrors.firstName}
                             </div>
                         )}
                     </FormField>
                 </div>
                 <div className="form-field">
-                    <FormField>
+                    <FormField error={formErrors.lastName !== undefined}>
                         <label>Last Name</label>
                         <input
                             placeholder="Last Name"
-                            {...register("middleName")}
-
+                            {...register("lastName")}
+                            className={formErrors.lastName ? "error" : ""}
                         />
-                        {errors.middleName && (
+                        {formErrors.lastName && (
                             <div className="ui pointing red basic label">
-                                {errors.middleName.message}
+                                {formErrors.lastName}
                             </div>
                         )}
                     </FormField>
                 </div>
 
                 <div className="form-field">
-                    <FormField>
+                    <FormField error={formErrors.birthDate !== undefined}>
                         <label>Birth Date</label>
                         <input
                             type="date"
                             name="birthDate"
                             {...register("birthDate")}
-
+                            className={formErrors.birthDate ? "error" : ""}
                         />
-                        {errors.birthDate && (
+                        {formErrors.birthDate && (
                             <div className="ui pointing red basic label">
-                                {errors.birthDate.message}
+                                {formErrors.birthDate}
                             </div>
                         )}
                     </FormField>
                 </div>
-
+                <div className="form-field">
+                    <FormField error={formErrors.phoneNumber !== undefined}>
+                        <label>Phone Number</label>
+                        <input
+                            placeholder="Phone Number"
+                            {...register("phoneNumber")}
+                            className={formErrors.phoneNumber ? "error" : ""}
+                        />
+                        {formErrors.phoneNumber && (
+                            <div className="ui pointing red basic label">
+                                {formErrors.phoneNumber}
+                            </div>
+                        )}
+                    </FormField>
+                </div>
+                <div className="form-field">
+                    <FormField error={formErrors.email !== undefined}>
+                        <label>Email</label>
+                        <input
+                            placeholder="Email"
+                            {...register("email")}
+                            className={formErrors.email ? "error" : ""}
+                        />
+                        {formErrors.email && (
+                            <div className="ui pointing red basic label">
+                                {formErrors.email}
+                            </div>
+                        )}
+                    </FormField>
+                </div>
                 <div className="form-field">
                     <FormField>
                         <label>Gender</label>
@@ -135,69 +207,38 @@ const Register = () => {
                                 <label htmlFor="other">Other</label>
                             </div>
                         </div>
-                        {errors.gender && (
+                        {formErrors.gender && (
                             <div className="ui pointing red basic label">
-                                {errors.gender.message}
-                            </div>
-                        )}
-                    </FormField>
-                </div>
-
-                <div className="form-field">
-                    <FormField>
-                        <label>Phone Number</label>
-                        <input
-                            placeholder="Phone Number"
-                            {...register("phoneNumber")}
-
-                        />
-                        {errors.phoneNumber && (
-                            <div className="ui pointing red basic label">
-                                {errors.phoneNumber.message}
+                                {formErrors.gender}
                             </div>
                         )}
                     </FormField>
                 </div>
                 <div className="form-field">
-                    <FormField>
+                    <FormField error={formErrors.country !== undefined}>
                         <label>Country</label>
-                        <select {...register("country")} className="ui search dropdown">
+                        <select {...register("country")} className={formErrors.country ? "error" : "ui search dropdown"}>
                             <option value="">Select your country</option>
                             {
                                 countryOptions?.map((country) => <option key={country?.key} value={country?.value}>{country?.text}</option>)
                             }
                         </select>
-                        {errors.country && (
+                        {formErrors.country && (
                             <div className="ui pointing red basic label">
-                                {errors.country.message}
+                                {formErrors.country}
                             </div>
                         )}
                     </FormField>
                 </div>
                 <div className="form-field">
-                    <FormField>
-                        <label>Email</label>
-                        <input
-                            placeholder="Email"
-                            {...register("email")}
-
-                        />
-                        {errors.email && (
-                            <div className="ui pointing red basic label">
-                                {errors.email.message}
-                            </div>
-                        )}
-                    </FormField>
-                </div>
-                <div className="form-field">
-                    <FormField>
+                    <FormField error={formErrors.password !== undefined}>
                         <label>Password</label>
                         <div className="ui input">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Password"
                                 {...register("password")}
-
+                                className={formErrors.password ? "error" : ""}
                             />
                             <Icon
                                 name={showPassword ? "eye slash" : "eye"}
@@ -206,22 +247,22 @@ const Register = () => {
                                 style={{ cursor: "pointer", position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)" }}
                             />
                         </div>
-                        {errors.password && (
+                        {formErrors.password && (
                             <div className="ui pointing red basic label">
-                                {errors.password.message}
+                                {formErrors.password}
                             </div>
                         )}
                     </FormField>
                 </div>
                 <div className="form-field">
-                    <FormField>
+                    <FormField error={formErrors.confirmPassword !== undefined}>
                         <label>Confirm Password</label>
                         <div className="ui input">
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="Confirm Password"
                                 {...register("confirmPassword")}
-
+                                className={formErrors.confirmPassword ? "error" : ""}
                             />
                             <Icon
                                 name={showConfirmPassword ? "eye slash" : "eye"}
@@ -230,9 +271,9 @@ const Register = () => {
                                 style={{ cursor: "pointer", position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)" }}
                             />
                         </div>
-                        {errors.confirmPassword && (
+                        {formErrors.confirmPassword && (
                             <div className="ui pointing red basic label">
-                                {errors.confirmPassword.message}
+                                {formErrors.confirmPassword}
                             </div>
                         )}
                     </FormField>
@@ -246,5 +287,3 @@ const Register = () => {
 };
 
 export default Register;
-
-

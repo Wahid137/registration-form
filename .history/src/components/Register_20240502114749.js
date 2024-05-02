@@ -2,7 +2,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
+import { Button, Container, Form, FormField, Icon, Input } from "semantic-ui-react";
 import { countryOptions } from "../utils/country";
 
 
@@ -73,7 +73,7 @@ const Register = () => {
                 <div className="form-field">
                     <FormField>
                         <label>First Name</label>
-                        <input
+                        <Input
                             placeholder="First Name"
                             {...register("firstName")}
 

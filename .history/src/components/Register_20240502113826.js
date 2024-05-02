@@ -24,19 +24,15 @@ const schema = Joi.object({
     email: Joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required().label("Email"),
     password: Joi.string()
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,}$/)
+        .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{3,}$"))
         .required()
         .label("Password")
-        .messages({
-            'string.pattern.base': '{{#label}} must contain at least one lowercase letter, one uppercase letter, and one digit'
-        }),
+        .message("Password must contain at least one lowercase letter, one uppercase letter, and one digit."),
     confirmPassword: Joi.any()
         .equal(Joi.ref('password'))
         .required()
         .label('Confirm Password')
-        .messages({
-            'any.only': '{{#label}} does not match the password'
-        }),
+        .message('{{#label}} does not match'),
 });
 
 const Register = () => {

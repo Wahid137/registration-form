@@ -3,9 +3,64 @@ import Joi from "joi";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
-import { countryOptions } from "../utils/country";
 
-
+/* //schema
+const schema = Joi.object({
+    firstName: Joi.string().min(2).max(20).pattern(nameRegex).required().messages({
+        "string.base": "First name must be a string",
+        "string.empty": "Please enter your first name",
+        "string.min": "First name must have at least {#limit} characters",
+        "string.max": "First name cannot exceed {#limit} characters",
+        "string.pattern.base": "First name must contain only alphabets and spaces",
+        "any.required": "First name is required",
+    }),
+    lastName: Joi.string().min(2).max(20).pattern(nameRegex).required().messages({
+        "string.base": "Last name must be a string",
+        "string.empty": "Please enter your last name",
+        "string.min": "Last name must have at least {#limit} characters",
+        "string.max": "Last name cannot exceed {#limit} characters",
+        "string.pattern.base": "Last name must contain only alphabets and spaces",
+        "any.required": "Last name is required",
+    }),
+    gender: Joi.string().valid('male', 'female', 'other').required().messages({
+        "any.required": "Gender is required",
+        "any.only": "Please select a valid gender",
+    }),
+    birthDate: Joi.date()
+        .max(minBirthDate)
+        .required()
+        .messages({
+            "date.base": "Please enter a valid date",
+            "date.max": "You must be at least 18 years old",
+            "any.required": "Birth date is required",
+        }),
+    phoneNumber: Joi.string().pattern(phoneRegex).required().messages({
+        "string.base": "Phone number must be a string",
+        "string.empty": "Please enter your phone number",
+        "string.pattern.base": "Phone number must be exactly 10 digits",
+        "any.required": "Phone number is required",
+    }),
+    email: Joi.string().email({ tlds: { allow: false } }).required().messages({
+        "string.base": "Email must be a string",
+        "string.empty": "Please enter your email",
+        "string.email": "Please enter a valid email address",
+        "any.required": "Email is required",
+    }),
+    password: Joi.string().pattern(passwordRegex).required().messages({
+        "string.base": "Password must be a string",
+        "string.empty": "Please enter your password",
+        "string.pattern.base": "Password must be 3 to 30 characters long and contain at least one lowercase letter, one uppercase letter, and one digit",
+        "any.required": "Password is required",
+    }),
+    confirmPassword: Joi.string().valid().required().messages({
+        "any.required": "Confirm password is required",
+        "any.only": "Passwords do not match",
+    }),
+    country: Joi.string().required().messages({
+        "any.required": "Please select a country",
+        "string.empty": "Please select a country",
+    }),
+}); */
 
 const schema = Joi.object({
     firstName: Joi.string().min(2).max(20).required().label("First Name"),
@@ -18,25 +73,10 @@ const schema = Joi.object({
         'any.only': 'Please select a gender',
     }),
     phoneNumber: Joi.string().length(10).required().label("Phone Number"),
-    country: Joi.string().required().label("Country").messages({
-        'any.required': 'Please select a country',
-    }),
     email: Joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required().label("Email"),
-    password: Joi.string()
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,}$/)
-        .required()
-        .label("Password")
-        .messages({
-            'string.pattern.base': '{{#label}} must contain at least one lowercase letter, one uppercase letter, and one digit'
-        }),
-    confirmPassword: Joi.any()
-        .equal(Joi.ref('password'))
-        .required()
-        .label('Confirm Password')
-        .messages({
-            'any.only': '{{#label}} does not match the password'
-        }),
+    password: Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,}$/).required().label("Password"),
+    confirmPassword: Joi.any().equal(Joi.ref('password')).required().label('Confirm Password').options({ messages: { 'any.only': '{{#label}} does not match' } })
 });
 
 const Register = () => {
@@ -47,6 +87,7 @@ const Register = () => {
 
     //useForm
     const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: joiResolver(schema) });
+
 
 
     //submit handler
@@ -118,7 +159,7 @@ const Register = () => {
                     </FormField>
                 </div>
 
-                <div className="form-field">
+                {/*  <div className="form-field">
                     <FormField>
                         <label>Gender</label>
                         <div className="gender-field">
@@ -141,7 +182,7 @@ const Register = () => {
                             </div>
                         )}
                     </FormField>
-                </div>
+                </div> */}
 
                 <div className="form-field">
                     <FormField>
@@ -158,22 +199,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
-                    <FormField>
-                        <label>Country</label>
-                        <select {...register("country")} className="ui search dropdown">
-                            <option value="">Select your country</option>
-                            {
-                                countryOptions?.map((country) => <option key={country?.key} value={country?.value}>{country?.text}</option>)
-                            }
-                        </select>
-                        {errors.country && (
-                            <div className="ui pointing red basic label">
-                                {errors.country.message}
-                            </div>
-                        )}
-                    </FormField>
-                </div>
+
                 <div className="form-field">
                     <FormField>
                         <label>Email</label>
@@ -248,3 +274,26 @@ const Register = () => {
 export default Register;
 
 
+{/*
+             
+             
+             
+              
+                <div className="form-field">
+                    <FormField error={formErrors.country !== undefined}>
+                        <label>Country</label>
+                        <select {...register("country")} className={formErrors.country ? "error" : "ui search dropdown"}>
+                            <option value="">Select your country</option>
+                            {
+                                countryOptions?.map((country) => <option key={country?.key} value={country?.value}>{country?.text}</option>)
+                            }
+                        </select>
+                        {formErrors.country && (
+                            <div className="ui pointing red basic label">
+                                {formErrors.country}
+                            </div>
+                        )}
+                    </FormField>
+                </div>
+            
+                */}

@@ -3,7 +3,6 @@ import Joi from "joi";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Container, Form, FormField, Icon } from "semantic-ui-react";
-import { countryOptions } from "../utils/country";
 
 
 
@@ -18,25 +17,10 @@ const schema = Joi.object({
         'any.only': 'Please select a gender',
     }),
     phoneNumber: Joi.string().length(10).required().label("Phone Number"),
-    country: Joi.string().required().label("Country").messages({
-        'any.required': 'Please select a country',
-    }),
     email: Joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required().label("Email"),
-    password: Joi.string()
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,}$/)
-        .required()
-        .label("Password")
-        .messages({
-            'string.pattern.base': '{{#label}} must contain at least one lowercase letter, one uppercase letter, and one digit'
-        }),
-    confirmPassword: Joi.any()
-        .equal(Joi.ref('password'))
-        .required()
-        .label('Confirm Password')
-        .messages({
-            'any.only': '{{#label}} does not match the password'
-        }),
+    password: Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,}$/).required().label("Password"),
+    confirmPassword: Joi.any().equal(Joi.ref('password')).required().label('Confirm Password').options({ messages: { 'any.only': '{{#label}} does not match' } })
 });
 
 const Register = () => {
@@ -90,7 +74,7 @@ const Register = () => {
                         <label>Last Name</label>
                         <input
                             placeholder="Last Name"
-                            {...register("middleName")}
+                            {...register("lastName")}
 
                         />
                         {errors.middleName && (
@@ -158,22 +142,7 @@ const Register = () => {
                         )}
                     </FormField>
                 </div>
-                <div className="form-field">
-                    <FormField>
-                        <label>Country</label>
-                        <select {...register("country")} className="ui search dropdown">
-                            <option value="">Select your country</option>
-                            {
-                                countryOptions?.map((country) => <option key={country?.key} value={country?.value}>{country?.text}</option>)
-                            }
-                        </select>
-                        {errors.country && (
-                            <div className="ui pointing red basic label">
-                                {errors.country.message}
-                            </div>
-                        )}
-                    </FormField>
-                </div>
+
                 <div className="form-field">
                     <FormField>
                         <label>Email</label>
